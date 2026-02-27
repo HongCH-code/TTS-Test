@@ -3,13 +3,13 @@
 import torch
 
 # 模型設定
-MODEL_NAME = "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice"
-# 升級時改為: "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+CUSTOM_VOICE_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+VOICE_DESIGN_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign"
 
-# 裝置設定：優先 MPS (Apple Silicon)，否則 CUDA，最後 CPU
+# 裝置設定
 if torch.backends.mps.is_available():
     DEVICE = "mps"
-    DTYPE = torch.float32  # MPS 對 bfloat16 支援有限
+    DTYPE = torch.float32
 elif torch.cuda.is_available():
     DEVICE = "cuda"
     DTYPE = torch.bfloat16
@@ -17,7 +17,7 @@ else:
     DEVICE = "cpu"
     DTYPE = torch.float32
 
-# 語言與音色對照表（0.6B-CustomVoice 預設音色，模型使用小寫名稱）
+# 語言與音色對照表（1.7B-CustomVoice 預設音色）
 LANGUAGE_SPEAKERS = {
     "Chinese": ["vivian", "serena", "uncle_fu", "dylan", "eric"],
     "English": ["ryan", "aiden"],
@@ -25,12 +25,18 @@ LANGUAGE_SPEAKERS = {
     "Korean": ["sohee"],
 }
 
-# 音色顯示名稱（用於前端）
+# 音色顯示名稱
 SPEAKER_DISPLAY_NAMES = {
     "vivian": "Vivian", "serena": "Serena", "uncle_fu": "Uncle Fu",
     "dylan": "Dylan", "eric": "Eric", "ryan": "Ryan", "aiden": "Aiden",
     "ono_anna": "Ono Anna", "sohee": "Sohee",
 }
+
+# VoiceDesign 支援的語言
+VOICE_DESIGN_LANGUAGES = [
+    "Chinese", "English", "Japanese", "Korean",
+    "German", "French", "Russian", "Portuguese", "Spanish", "Italian",
+]
 
 # Server 設定
 HOST = "0.0.0.0"

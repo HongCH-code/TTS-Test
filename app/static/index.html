@@ -118,6 +118,102 @@
             line-height: 1.6;
         }
 
+        /* Mode tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-surface);
+            border-radius: 10px;
+            margin-bottom: 32px;
+            animation: fadeUp 0.8s ease 0.05s both;
+        }
+        .mode-tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .mode-tab:hover { color: var(--text-secondary); }
+        .mode-tab.active {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Voice description input */
+        .instruct-section {
+            margin-bottom: 24px;
+            display: none;
+        }
+        .instruct-section.show { display: block; }
+        .instruct-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: border-color 0.3s;
+        }
+        .instruct-wrapper:focus-within {
+            border-color: var(--accent-dim);
+        }
+        .instruct-input {
+            width: 100%;
+            min-height: 72px;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+        .instruct-input::placeholder { color: var(--text-muted); }
+        .instruct-hint {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            padding: 0 20px 12px;
+            line-height: 1.5;
+        }
+        .example-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 20px 14px;
+        }
+        .example-chip {
+            padding: 5px 12px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-family: inherit;
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .example-chip:hover {
+            border-color: var(--accent-dim);
+            color: var(--text-primary);
+        }
+
+        /* Design language grid - wider for 10 langs */
+        .lang-grid.expanded {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        @media (max-width: 600px) {
+            .lang-grid.expanded { grid-template-columns: repeat(3, 1fr); }
+        }
+        .lang-card .native.small { font-size: 0.9375rem; }
+
         /* Section labels */
         .section-label {
             font-size: 0.6875rem;
@@ -519,6 +615,22 @@
             <p>Multi-language voice synthesis powered by Qwen3-TTS</p>
         </header>
 
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="preset" onclick="switchMode('preset')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px">
+                    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/>
+                </svg>
+                Preset Voice
+            </button>
+            <button class="mode-tab" data-mode="design" onclick="switchMode('design')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px">
+                    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Voice Design
+            </button>
+        </div>
+
         <!-- Language -->
         <section class="lang-section">
             <div class="section-label">Language</div>
@@ -529,6 +641,21 @@
         <section class="speaker-section">
             <div class="section-label">Voice</div>
             <div class="speaker-chips" id="speakerChips"></div>
+        </section>
+
+        <!-- Voice Design Instruct -->
+        <section class="instruct-section" id="instructSection">
+            <div class="section-label">Voice Description</div>
+            <div class="instruct-wrapper">
+                <textarea class="instruct-input" id="instructInput" placeholder="Describe the voice you want, e.g. 'A warm, gentle female voice with a calm and soothing tone'"></textarea>
+                <div class="instruct-hint">Describe the gender, age, tone, emotion, and speaking style of the voice you want to create</div>
+                <div class="example-chips" id="exampleChips">
+                    <button class="example-chip" onclick="fillInstruct(this)">A young woman with a bright, cheerful voice</button>
+                    <button class="example-chip" onclick="fillInstruct(this)">A deep male voice, slow and authoritative</button>
+                    <button class="example-chip" onclick="fillInstruct(this)">A soft, whispery female voice with warmth</button>
+                    <button class="example-chip" onclick="fillInstruct(this)">An energetic young man, fast-paced and lively</button>
+                </div>
+            </div>
         </section>
 
         <!-- Text Input -->
@@ -599,10 +726,16 @@
 
     <script>
     const LANG_META = {
-        Chinese:  { native: "\u4e2d\u6587", label: "Chinese" },
+        Chinese:  { native: "中文", label: "Chinese" },
         English:  { native: "Eng", label: "English" },
-        Japanese: { native: "\u65e5\u672c\u8a9e", label: "Japanese" },
-        Korean:   { native: "\ud55c\uad6d\uc5b4", label: "Korean" },
+        Japanese: { native: "日本語", label: "Japanese" },
+        Korean:   { native: "한국어", label: "Korean" },
+        German:   { native: "Deutsch", label: "German" },
+        French:   { native: "Français", label: "French" },
+        Russian:  { native: "Русский", label: "Russian" },
+        Portuguese: { native: "Port.", label: "Portuguese" },
+        Spanish:  { native: "Español", label: "Spanish" },
+        Italian:  { native: "Italiano", label: "Italian" },
     };
 
     const SPEAKER_DISPLAY = {
@@ -612,15 +745,23 @@
     };
 
     const PLACEHOLDERS = {
-        Chinese:  "\u8acb\u8f38\u5165\u8981\u8f49\u63db\u70ba\u8a9e\u97f3\u7684\u4e2d\u6587\u6587\u5b57...",
+        Chinese:  "請輸入要轉換為語音的中文文字...",
         English:  "Enter text to convert to speech...",
-        Japanese: "\u97f3\u58f0\u306b\u5909\u63db\u3059\u308b\u30c6\u30ad\u30b9\u30c8\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044...",
-        Korean:   "\uc74c\uc131\uc73c\ub85c \ubcc0\ud658\ud560 \ud14d\uc2a4\ud2b8\ub97c \uc785\ub825\ud558\uc138\uc694...",
+        Japanese: "音声に変換するテキストを入力してください...",
+        Korean:   "음성으로 변환할 텍스트를 입력하세요...",
+        German:   "Text eingeben, der in Sprache umgewandelt werden soll...",
+        French:   "Entrez le texte à convertir en parole...",
+        Russian:  "Введите текст для преобразования в речь...",
+        Portuguese: "Digite o texto para converter em fala...",
+        Spanish:  "Ingrese el texto para convertir a voz...",
+        Italian:  "Inserisci il testo da convertire in voce...",
     };
 
     let speakersData = {};
+    let designLanguages = [];
     let selectedLang = null;
     let selectedSpeaker = null;
+    let currentMode = "preset";
     let currentAudioUrl = null;
     let audioBuffer = null;
     let animFrameId = null;
@@ -628,14 +769,49 @@
     // --- Init ---
     async function init() {
         try {
-            const res = await fetch("/api/speakers");
-            speakersData = await res.json();
+            const [speakersRes, designLangsRes] = await Promise.all([
+                fetch("/api/speakers"),
+                fetch("/api/design-languages"),
+            ]);
+            speakersData = await speakersRes.json();
+            designLanguages = await designLangsRes.json();
             const langs = Object.keys(speakersData);
             renderLangs(langs);
             selectLang(langs[0]);
         } catch {
-            showError("\u7121\u6cd5\u9023\u7dda\u81f3\u4f3a\u670d\u5668\uff0c\u8acb\u78ba\u8a8d server \u5df2\u555f\u52d5");
+            showError("無法連線至伺服器，請確認 server 已啟動");
         }
+    }
+
+    // --- Mode switching ---
+    function switchMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll(".mode-tab").forEach(t =>
+            t.classList.toggle("active", t.dataset.mode === mode)
+        );
+
+        const speakerSection = document.querySelector(".speaker-section");
+        const instructSection = document.getElementById("instructSection");
+        const langGrid = document.getElementById("langGrid");
+
+        if (mode === "design") {
+            speakerSection.style.display = "none";
+            instructSection.classList.add("show");
+            langGrid.classList.add("expanded");
+            renderLangs(designLanguages);
+            selectLang(designLanguages[0]);
+        } else {
+            speakerSection.style.display = "";
+            instructSection.classList.remove("show");
+            langGrid.classList.remove("expanded");
+            const langs = Object.keys(speakersData);
+            renderLangs(langs);
+            selectLang(langs[0]);
+        }
+    }
+
+    function fillInstruct(el) {
+        document.getElementById("instructInput").value = el.textContent;
     }
 
     // --- Language cards ---
@@ -644,10 +820,11 @@
         grid.innerHTML = "";
         for (const lang of langs) {
             const meta = LANG_META[lang] || { native: lang, label: lang };
+            const isSmall = langs.length > 4;
             const card = document.createElement("div");
             card.className = "lang-card";
             card.dataset.lang = lang;
-            card.innerHTML = `<div class="dot"></div><div class="native">${meta.native}</div><div class="label">${meta.label}</div>`;
+            card.innerHTML = `<div class="dot"></div><div class="native${isSmall ? " small" : ""}">${meta.native}</div><div class="label">${meta.label}</div>`;
             card.onclick = () => selectLang(lang);
             grid.appendChild(card);
         }
@@ -658,7 +835,9 @@
         document.querySelectorAll(".lang-card").forEach(c =>
             c.classList.toggle("active", c.dataset.lang === lang)
         );
-        renderSpeakers(speakersData[lang] || []);
+        if (currentMode === "preset") {
+            renderSpeakers(speakersData[lang] || []);
+        }
         document.getElementById("textInput").placeholder = PLACEHOLDERS[lang] || "Enter text...";
     }
 
@@ -697,22 +876,39 @@
     // --- Generate ---
     async function generate() {
         const text = document.getElementById("textInput").value.trim();
-        if (!text) { showError("\u8acb\u8f38\u5165\u6587\u5b57"); return; }
-        if (text.length > 500) { showError("\u6587\u5b57\u8d85\u904e 500 \u5b57\u4e0a\u9650"); return; }
-        if (!selectedLang || !selectedSpeaker) return;
+        if (!text) { showError("請輸入文字"); return; }
+        if (text.length > 500) { showError("文字超過 500 字上限"); return; }
+        if (!selectedLang) return;
+
+        if (currentMode === "preset" && !selectedSpeaker) return;
+
+        if (currentMode === "design") {
+            const instruct = document.getElementById("instructInput").value.trim();
+            if (!instruct) { showError("請輸入音色描述"); return; }
+        }
 
         hideError();
         setLoading(true);
 
         try {
-            const res = await fetch("/api/tts", {
+            let url, body;
+            if (currentMode === "design") {
+                const instruct = document.getElementById("instructInput").value.trim();
+                url = "/api/voice-design";
+                body = { text, language: selectedLang, instruct };
+            } else {
+                url = "/api/tts";
+                body = { text, language: selectedLang, speaker: selectedSpeaker };
+            }
+
+            const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text, language: selectedLang, speaker: selectedSpeaker }),
+                body: JSON.stringify(body),
             });
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.detail || "\u751f\u6210\u5931\u6557");
+                throw new Error(err.detail || "生成失敗");
             }
 
             const blob = await res.blob();
@@ -728,7 +924,11 @@
             audio.src = currentAudioUrl;
 
             document.getElementById("metaLang").textContent = selectedLang;
-            document.getElementById("metaSpeaker").textContent = SPEAKER_DISPLAY[selectedSpeaker] || selectedSpeaker;
+            if (currentMode === "design") {
+                document.getElementById("metaSpeaker").textContent = "Voice Design";
+            } else {
+                document.getElementById("metaSpeaker").textContent = SPEAKER_DISPLAY[selectedSpeaker] || selectedSpeaker;
+            }
             document.getElementById("playerSection").classList.add("show");
 
             drawWaveform();
