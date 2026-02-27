@@ -205,6 +205,210 @@
             color: var(--text-primary);
         }
 
+        /* Voice Clone upload */
+        .clone-section {
+            margin-bottom: 24px;
+            display: none;
+        }
+        .clone-section.show { display: block; }
+        .upload-zone {
+            background: var(--bg-surface);
+            border: 2px dashed var(--border-light);
+            border-radius: 14px;
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent-dim);
+            background: var(--bg-elevated);
+        }
+        .upload-zone.has-file {
+            border-style: solid;
+            border-color: var(--success);
+        }
+        .upload-zone svg {
+            display: block;
+            margin: 0 auto 10px;
+            color: var(--text-muted);
+        }
+        .upload-zone.has-file svg { color: var(--success); }
+        .upload-zone-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .upload-zone-hint {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+        .upload-zone-filename {
+            display: none;
+            font-size: 0.8125rem;
+            color: var(--success);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        .upload-zone.has-file .upload-zone-filename { display: block; }
+        .upload-zone.has-file .upload-zone-text { display: none; }
+        .upload-zone.has-file .upload-zone-hint { display: none; }
+        .ref-text-wrapper {
+            margin-top: 12px;
+        }
+        .ref-text-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .ref-text-input:focus { border-color: var(--accent-dim); }
+        .ref-text-input::placeholder { color: var(--text-muted); }
+        .ref-text-hint {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* Registered voices */
+        .registered-section {
+            margin-bottom: 20px;
+            display: none;
+        }
+        .registered-section.show { display: block; }
+        .registered-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .registered-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px 8px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+        .registered-chip:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+        .registered-chip.active {
+            border-color: var(--accent-dim);
+            color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .registered-chip .chip-name {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .registered-chip .chip-delete {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            line-height: 1;
+            transition: all 0.2s;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .registered-chip .chip-delete:hover {
+            background: var(--error);
+            color: white;
+        }
+        .registered-empty {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            padding: 8px 0;
+        }
+        .voice-name-wrapper {
+            margin-top: 12px;
+        }
+        .voice-name-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .voice-name-input:focus { border-color: var(--accent-dim); }
+        .voice-name-input::placeholder { color: var(--text-muted); }
+        .clone-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .clone-btn-group .btn-register {
+            flex: 1;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--accent), #b8943e);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .clone-btn-group .btn-register:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px var(--accent-glow);
+        }
+        .clone-btn-group .btn-register:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .clone-btn-group .btn-once {
+            flex: 1;
+            padding: 14px 20px;
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .clone-btn-group .btn-once:hover:not(:disabled) {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+        .clone-btn-group .btn-once:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         /* Design language grid - wider for 10 langs */
         .lang-grid.expanded {
             grid-template-columns: repeat(5, 1fr);
@@ -629,6 +833,12 @@
                 </svg>
                 Voice Design
             </button>
+            <button class="mode-tab" data-mode="clone" onclick="switchMode('clone')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px">
+                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v-2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/>
+                </svg>
+                Voice Clone
+            </button>
         </div>
 
         <!-- Language -->
@@ -655,6 +865,43 @@
                     <button class="example-chip" onclick="fillInstruct(this)">A soft, whispery female voice with warmth</button>
                     <button class="example-chip" onclick="fillInstruct(this)">An energetic young man, fast-paced and lively</button>
                 </div>
+            </div>
+        </section>
+
+        <!-- Registered Voices -->
+        <section class="registered-section" id="registeredSection">
+            <div class="section-label">Registered Voices</div>
+            <div class="registered-chips" id="registeredChips">
+                <div class="registered-empty" id="registeredEmpty">No voices registered yet — upload a reference audio below to register</div>
+            </div>
+        </section>
+
+        <!-- Voice Clone Upload -->
+        <section class="clone-section" id="cloneSection">
+            <div class="section-label">Reference Audio</div>
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('refAudioInput').click()">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <div class="upload-zone-text">Click or drag to upload reference audio</div>
+                <div class="upload-zone-hint">WAV, MP3, FLAC, OGG, M4A — at least 3 seconds, max 10MB</div>
+                <div class="upload-zone-filename" id="uploadFilename"></div>
+            </div>
+            <input type="file" id="refAudioInput" accept=".wav,.mp3,.flac,.ogg,.m4a" style="display:none" onchange="handleFileSelect(this)">
+            <div class="ref-text-wrapper">
+                <input type="text" class="ref-text-input" id="refTextInput" placeholder="Transcript of the reference audio (what is being said)">
+                <div class="ref-text-hint">Required — type what the person says in the audio, this helps the model clone the voice accurately</div>
+                <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:0.8125rem;color:var(--text-secondary);cursor:pointer">
+                    <input type="checkbox" id="xVectorOnly" style="accent-color:var(--accent)">
+                    X-Vector only mode (no transcript needed, faster but lower quality)
+                </label>
+            </div>
+            <div class="voice-name-wrapper">
+                <input type="text" class="voice-name-input" id="voiceNameInput" placeholder="Voice name (e.g. 'Alice', 'Narrator')">
+            </div>
+            <div class="clone-btn-group">
+                <button class="btn-register" id="btnRegisterGenerate" onclick="registerAndGenerate()">Register & Generate</button>
+                <button class="btn-once" id="btnGenerateOnce" onclick="generate()">Generate Once</button>
             </div>
         </section>
 
@@ -759,22 +1006,30 @@
 
     let speakersData = {};
     let designLanguages = [];
+    let cloneLanguages = [];
     let selectedLang = null;
     let selectedSpeaker = null;
     let currentMode = "preset";
     let currentAudioUrl = null;
     let audioBuffer = null;
     let animFrameId = null;
+    let refAudioFile = null;
+    let selectedRegisteredVoice = null;
+    let registeredVoices = [];
 
     // --- Init ---
     async function init() {
         try {
-            const [speakersRes, designLangsRes] = await Promise.all([
+            const [speakersRes, designLangsRes, cloneLangsRes, regVoicesRes] = await Promise.all([
                 fetch("/api/speakers"),
                 fetch("/api/design-languages"),
+                fetch("/api/clone-languages"),
+                fetch("/api/registered-voices"),
             ]);
             speakersData = await speakersRes.json();
             designLanguages = await designLangsRes.json();
+            cloneLanguages = await cloneLangsRes.json();
+            registeredVoices = await regVoicesRes.json();
             const langs = Object.keys(speakersData);
             renderLangs(langs);
             selectLang(langs[0]);
@@ -786,32 +1041,218 @@
     // --- Mode switching ---
     function switchMode(mode) {
         currentMode = mode;
+        selectedRegisteredVoice = null;
         document.querySelectorAll(".mode-tab").forEach(t =>
             t.classList.toggle("active", t.dataset.mode === mode)
         );
 
         const speakerSection = document.querySelector(".speaker-section");
         const instructSection = document.getElementById("instructSection");
+        const cloneSection = document.getElementById("cloneSection");
+        const registeredSection = document.getElementById("registeredSection");
         const langGrid = document.getElementById("langGrid");
+        const generateSection = document.querySelector(".generate-section");
 
-        if (mode === "design") {
-            speakerSection.style.display = "none";
+        // Reset all
+        speakerSection.style.display = "none";
+        instructSection.classList.remove("show");
+        cloneSection.classList.remove("show");
+        registeredSection.classList.remove("show");
+        langGrid.classList.remove("expanded");
+        generateSection.style.display = "";
+
+        if (mode === "preset") {
+            speakerSection.style.display = "";
+            const langs = Object.keys(speakersData);
+            renderLangs(langs);
+            selectLang(langs[0]);
+        } else if (mode === "design") {
             instructSection.classList.add("show");
             langGrid.classList.add("expanded");
             renderLangs(designLanguages);
             selectLang(designLanguages[0]);
-        } else {
-            speakerSection.style.display = "";
-            instructSection.classList.remove("show");
-            langGrid.classList.remove("expanded");
-            const langs = Object.keys(speakersData);
-            renderLangs(langs);
-            selectLang(langs[0]);
+        } else if (mode === "clone") {
+            registeredSection.classList.add("show");
+            cloneSection.classList.add("show");
+            langGrid.classList.add("expanded");
+            renderLangs(cloneLanguages);
+            selectLang(cloneLanguages[0]);
+            renderRegisteredVoices();
+            generateSection.style.display = "none";
         }
     }
 
     function fillInstruct(el) {
         document.getElementById("instructInput").value = el.textContent;
+    }
+
+    // --- File upload ---
+    function handleFileSelect(input) {
+        const file = input.files[0];
+        if (!file) return;
+        refAudioFile = file;
+        const zone = document.getElementById("uploadZone");
+        zone.classList.add("has-file");
+        document.getElementById("uploadFilename").textContent = file.name;
+    }
+
+    // Drag and drop
+    (function() {
+        const zone = document.getElementById("uploadZone");
+        zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("dragover"); });
+        zone.addEventListener("dragleave", () => zone.classList.remove("dragover"));
+        zone.addEventListener("drop", e => {
+            e.preventDefault();
+            zone.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                refAudioFile = file;
+                document.getElementById("refAudioInput").files = e.dataTransfer.files;
+                zone.classList.add("has-file");
+                document.getElementById("uploadFilename").textContent = file.name;
+            }
+        });
+    })();
+
+    // --- Registered Voices ---
+    function renderRegisteredVoices() {
+        const wrap = document.getElementById("registeredChips");
+        const empty = document.getElementById("registeredEmpty");
+        // Clear all except the empty message
+        wrap.querySelectorAll(".registered-chip").forEach(c => c.remove());
+
+        if (registeredVoices.length === 0) {
+            empty.style.display = "";
+            return;
+        }
+        empty.style.display = "none";
+
+        for (const v of registeredVoices) {
+            const chip = document.createElement("div");
+            chip.className = "registered-chip" + (selectedRegisteredVoice === v.id ? " active" : "");
+            chip.dataset.voiceId = v.id;
+            chip.innerHTML = `<span class="chip-name">${escapeHtml(v.name)}</span><button class="chip-delete" title="Delete" onclick="event.stopPropagation(); deleteRegisteredVoice('${v.id}')">&times;</button>`;
+            chip.onclick = () => selectRegisteredVoice(v.id);
+            wrap.appendChild(chip);
+        }
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement("div");
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    function selectRegisteredVoice(id) {
+        if (selectedRegisteredVoice === id) {
+            // Deselect — show upload area again
+            selectedRegisteredVoice = null;
+            document.getElementById("cloneSection").classList.add("show");
+            document.querySelector(".generate-section").style.display = "none";
+        } else {
+            selectedRegisteredVoice = id;
+            // Hide upload area, show main generate button
+            document.getElementById("cloneSection").classList.remove("show");
+            document.querySelector(".generate-section").style.display = "";
+        }
+        renderRegisteredVoices();
+    }
+
+    async function deleteRegisteredVoice(id) {
+        try {
+            await fetch(`/api/registered-voices/${id}`, { method: "DELETE" });
+            registeredVoices = registeredVoices.filter(v => v.id !== id);
+            if (selectedRegisteredVoice === id) {
+                selectedRegisteredVoice = null;
+                document.getElementById("cloneSection").classList.add("show");
+                document.querySelector(".generate-section").style.display = "none";
+            }
+            renderRegisteredVoices();
+        } catch {
+            showError("刪除音色失敗");
+        }
+    }
+
+    async function registerAndGenerate() {
+        const text = document.getElementById("textInput").value.trim();
+        if (!text) { showError("請輸入文字"); return; }
+        if (text.length > 500) { showError("文字超過 500 字上限"); return; }
+        if (!selectedLang) return;
+        if (!refAudioFile) { showError("請上傳參考音頻"); return; }
+
+        const xvOnly = document.getElementById("xVectorOnly").checked;
+        const refText = document.getElementById("refTextInput").value.trim();
+        if (!xvOnly && !refText) { showError("請輸入參考音頻的文字稿，或勾選 X-Vector only 模式"); return; }
+
+        const voiceName = document.getElementById("voiceNameInput").value.trim();
+        if (!voiceName) { showError("請輸入音色名稱"); return; }
+
+        hideError();
+        setLoading(true);
+        document.getElementById("btnRegisterGenerate").disabled = true;
+        document.getElementById("btnGenerateOnce").disabled = true;
+
+        try {
+            // Step 1: Register the voice
+            const regForm = new FormData();
+            regForm.append("name", voiceName);
+            regForm.append("ref_audio", refAudioFile);
+            if (refText) regForm.append("ref_text", refText);
+            regForm.append("x_vector_only", xvOnly);
+
+            const regRes = await fetch("/api/voice-register", {
+                method: "POST",
+                body: regForm,
+            });
+            if (!regRes.ok) {
+                const err = await regRes.json();
+                throw new Error(err.detail || "註冊失敗");
+            }
+            const { voice_id, name } = await regRes.json();
+            registeredVoices.push({ id: voice_id, name });
+            selectedRegisteredVoice = voice_id;
+            renderRegisteredVoices();
+
+            // Step 2: Generate with the registered voice
+            const genRes = await fetch("/api/voice-clone-registered", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, language: selectedLang, voice_id }),
+            });
+            if (!genRes.ok) {
+                const err = await genRes.json();
+                throw new Error(err.detail || "生成失敗");
+            }
+
+            const blob = await genRes.blob();
+            if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+            currentAudioUrl = URL.createObjectURL(blob);
+
+            const arrBuf = await blob.arrayBuffer();
+            const actx = new (window.AudioContext || window.webkitAudioContext)();
+            audioBuffer = await actx.decodeAudioData(arrBuf);
+
+            const audio = document.getElementById("audio");
+            audio.src = currentAudioUrl;
+
+            document.getElementById("metaLang").textContent = selectedLang;
+            document.getElementById("metaSpeaker").textContent = name + " (Registered)";
+            document.getElementById("playerSection").classList.add("show");
+
+            drawWaveform();
+            audio.play();
+            startPlaybackLoop();
+
+            // Switch to registered voice view
+            document.getElementById("cloneSection").classList.remove("show");
+            document.querySelector(".generate-section").style.display = "";
+        } catch (e) {
+            showError(e.message);
+        } finally {
+            setLoading(false);
+            document.getElementById("btnRegisterGenerate").disabled = false;
+            document.getElementById("btnGenerateOnce").disabled = false;
+        }
     }
 
     // --- Language cards ---
@@ -887,25 +1328,58 @@
             if (!instruct) { showError("請輸入音色描述"); return; }
         }
 
+        if (currentMode === "clone" && !selectedRegisteredVoice) {
+            if (!refAudioFile) { showError("請上傳參考音頻"); return; }
+            const xvOnly = document.getElementById("xVectorOnly").checked;
+            const refText = document.getElementById("refTextInput").value.trim();
+            if (!xvOnly && !refText) { showError("請輸入參考音頻的文字稿，或勾選 X-Vector only 模式"); return; }
+        }
+
         hideError();
         setLoading(true);
 
         try {
-            let url, body;
-            if (currentMode === "design") {
+            let res;
+
+            if (currentMode === "clone" && selectedRegisteredVoice) {
+                // Use registered voice (cached prompt)
+                res = await fetch("/api/voice-clone-registered", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        text, language: selectedLang,
+                        voice_id: selectedRegisteredVoice,
+                    }),
+                });
+            } else if (currentMode === "clone") {
+                const formData = new FormData();
+                formData.append("text", text);
+                formData.append("language", selectedLang);
+                formData.append("ref_audio", refAudioFile);
+                const refText = document.getElementById("refTextInput").value.trim();
+                if (refText) formData.append("ref_text", refText);
+                const xvOnly = document.getElementById("xVectorOnly").checked;
+                formData.append("x_vector_only", xvOnly);
+
+                res = await fetch("/api/voice-clone", {
+                    method: "POST",
+                    body: formData,
+                });
+            } else if (currentMode === "design") {
                 const instruct = document.getElementById("instructInput").value.trim();
-                url = "/api/voice-design";
-                body = { text, language: selectedLang, instruct };
+                res = await fetch("/api/voice-design", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text, language: selectedLang, instruct }),
+                });
             } else {
-                url = "/api/tts";
-                body = { text, language: selectedLang, speaker: selectedSpeaker };
+                res = await fetch("/api/tts", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text, language: selectedLang, speaker: selectedSpeaker }),
+                });
             }
 
-            const res = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.detail || "生成失敗");
@@ -924,7 +1398,12 @@
             audio.src = currentAudioUrl;
 
             document.getElementById("metaLang").textContent = selectedLang;
-            if (currentMode === "design") {
+            if (currentMode === "clone" && selectedRegisteredVoice) {
+                const rv = registeredVoices.find(v => v.id === selectedRegisteredVoice);
+                document.getElementById("metaSpeaker").textContent = (rv ? rv.name : "Registered") + " (Cached)";
+            } else if (currentMode === "clone") {
+                document.getElementById("metaSpeaker").textContent = "Voice Clone";
+            } else if (currentMode === "design") {
                 document.getElementById("metaSpeaker").textContent = "Voice Design";
             } else {
                 document.getElementById("metaSpeaker").textContent = SPEAKER_DISPLAY[selectedSpeaker] || selectedSpeaker;
@@ -1058,6 +1537,11 @@
         document.getElementById("loadingBars").classList.toggle("show", show);
         document.getElementById("loadingText").classList.toggle("show", show);
         document.getElementById("generateBtn").disabled = show;
+        // Also disable clone-specific buttons if they exist
+        const btnReg = document.getElementById("btnRegisterGenerate");
+        const btnOnce = document.getElementById("btnGenerateOnce");
+        if (btnReg) btnReg.disabled = show;
+        if (btnOnce) btnOnce.disabled = show;
     }
 
     function showError(msg) {

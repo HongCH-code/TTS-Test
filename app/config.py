@@ -5,6 +5,7 @@ import torch
 # 模型設定
 CUSTOM_VOICE_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
 VOICE_DESIGN_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign"
+VOICE_CLONE_MODEL = "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
 
 # 裝置設定
 if torch.backends.mps.is_available():
@@ -37,6 +38,16 @@ VOICE_DESIGN_LANGUAGES = [
     "Chinese", "English", "Japanese", "Korean",
     "German", "French", "Russian", "Portuguese", "Spanish", "Italian",
 ]
+
+# Voice Clone 支援的語言（與 VoiceDesign 相同）
+VOICE_CLONE_LANGUAGES = [
+    "Chinese", "English", "Japanese", "Korean",
+    "German", "French", "Russian", "Portuguese", "Spanish", "Italian",
+]
+
+# 上傳設定
+UPLOAD_DIR = "uploads"
+MAX_AUDIO_SIZE_MB = 10
 
 # Server 設定
 HOST = "0.0.0.0"
