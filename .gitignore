@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Test audio files
+*.wav
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Playwright
+.playwright-mcp/
+*.png
