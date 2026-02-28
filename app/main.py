@@ -18,13 +18,16 @@ from app.config import (
 
 def auto_load_from_config(cfg: dict):
     """根據已儲存的設定，背景載入模型"""
-    model_size = cfg.get("model_size", "1.7B")
+    # 支援新格式 model_sizes dict，兼容舊格式 model_size 單一值
+    model_sizes = cfg.get("model_sizes", None)
+    fallback_size = cfg.get("model_size", "1.7B")
     custom_paths = cfg.get("custom_paths", {})
 
     for mode in ("preset", "design", "clone"):
         if cfg.get(mode, False):
+            size = model_sizes.get(mode, fallback_size) if model_sizes else fallback_size
             # 環境變數指定的路徑優先，其次是 custom_paths，最後是預設
-            model_id = custom_paths.get(mode) or get_model_id(mode, model_size)
+            model_id = custom_paths.get(mode) or get_model_id(mode, size)
             engine.load_single_model(mode, model_id)
 
 
@@ -50,7 +53,7 @@ class SetupLoadRequest(BaseModel):
     preset: bool = False
     design: bool = False
     clone: bool = False
-    model_size: str = "1.7B"
+    model_sizes: dict = {"preset": "1.7B", "design": "1.7B", "clone": "1.7B"}
 
 
 @app.get("/api/setup/status")
@@ -59,10 +62,17 @@ async def get_setup_status():
     saved = load_user_config()
     model_status = engine.get_status()
 
+    # 兼容舊格式：若無 model_sizes，從 model_size 建構
+    default_sizes = {"preset": "1.7B", "design": "1.7B", "clone": "1.7B"}
+    if saved:
+        fallback = saved.get("model_size", "1.7B")
+        model_sizes = saved.get("model_sizes", {m: fallback for m in default_sizes})
+    else:
+        model_sizes = default_sizes
+
     models = {}
     for mode in ("preset", "design", "clone"):
         enabled = saved.get(mode, False) if saved else False
-        model_size = saved.get("model_size", "1.7B") if saved else "1.7B"
         models[mode] = {
             "enabled": enabled,
             "status": model_status[mode]["status"],
@@ -73,7 +83,7 @@ async def get_setup_status():
     return {
         "configured": saved is not None,
         "models": models,
-        "model_size": saved.get("model_size", "1.7B") if saved else "1.7B",
+        "model_sizes": model_sizes,
         "device": DEVICE,
     }
 
@@ -81,8 +91,9 @@ async def get_setup_status():
 @app.post("/api/setup/load")
 async def setup_load(req: SetupLoadRequest):
     """儲存設定並開始背景載入模型"""
-    if req.model_size not in ("0.6B", "1.7B"):
-        raise HTTPException(status_code=400, detail="model_size 必須為 0.6B 或 1.7B")
+    for mode, size in req.model_sizes.items():
+        if size not in ("0.6B", "1.7B"):
+            raise HTTPException(status_code=400, detail=f"{mode} 的 model_size 必須為 0.6B 或 1.7B")
 
     if not any([req.preset, req.design, req.clone]):
         raise HTTPException(status_code=400, detail="請至少啟用一個模式")
@@ -92,7 +103,7 @@ async def setup_load(req: SetupLoadRequest):
         "preset": req.preset,
         "design": req.design,
         "clone": req.clone,
-        "model_size": req.model_size,
+        "model_sizes": req.model_sizes,
         "custom_paths": {
             "preset": None,
             "design": None,
@@ -109,7 +120,8 @@ async def setup_load(req: SetupLoadRequest):
 
         for mode in ("preset", "design", "clone"):
             if getattr(req, mode):
-                model_id = get_model_id(mode, req.model_size)
+                size = req.model_sizes.get(mode, "1.7B")
+                model_id = get_model_id(mode, size)
                 # 如果已經載入相同模型，跳過
                 current_id = engine.model_ids.get(mode)
                 if engine.model_status[mode] == "ready" and current_id == model_id:
