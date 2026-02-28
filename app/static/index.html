@@ -142,6 +142,11 @@
             transition: all 0.25s;
         }
         .mode-tab:hover { color: var(--text-secondary); }
+        .mode-tab.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
         .mode-tab.active {
             background: var(--bg-elevated);
             color: var(--text-primary);
@@ -802,6 +807,291 @@
             .header h1 { font-size: 1.625rem; }
             .app { padding: 32px 16px 60px; }
         }
+
+        /* ===== Setup Overlay ===== */
+        .setup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 8, 10, 0.92);
+            backdrop-filter: blur(24px);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s ease;
+        }
+        .setup-overlay.hidden { display: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .setup-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 520px;
+            margin: 24px;
+            animation: fadeUp 0.5s ease 0.1s both;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .setup-header .logo-mark {
+            margin: 0 auto 12px;
+        }
+        .setup-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .setup-header h2 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+        .setup-header p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .setup-device {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+        .setup-device .device-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .setup-section {
+            margin-bottom: 24px;
+        }
+        .setup-section-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+
+        .setup-toggle {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .setup-toggle:hover {
+            border-color: var(--border-light);
+            background: var(--bg-hover);
+        }
+        .setup-toggle.active {
+            border-color: var(--accent-dim);
+            background: rgba(200, 164, 78, 0.06);
+        }
+
+        .setup-toggle-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .setup-toggle.active .setup-toggle-check {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .setup-toggle.active .setup-toggle-check svg {
+            opacity: 1;
+        }
+        .setup-toggle-check svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: var(--bg-deep);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .setup-toggle-info {
+            flex: 1;
+        }
+        .setup-toggle-info .toggle-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .setup-toggle-info .toggle-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .setup-radio-group {
+            display: flex;
+            gap: 8px;
+        }
+        .setup-radio {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .setup-radio:hover {
+            border-color: var(--border-light);
+        }
+        .setup-radio.active {
+            border-color: var(--accent-dim);
+            background: rgba(200, 164, 78, 0.06);
+        }
+        .setup-radio .radio-label {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .setup-radio .radio-desc {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        .setup-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .setup-btn:hover { background: #d4b05a; }
+        .setup-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .setup-warning {
+            font-size: 0.75rem;
+            color: var(--error);
+            text-align: center;
+            margin-top: 8px;
+            display: none;
+        }
+        .setup-warning.show { display: block; }
+
+        /* --- Progress View --- */
+        .setup-progress { display: none; }
+        .setup-progress.show { display: block; }
+        .setup-form.hidden { display: none; }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        .progress-item + .progress-item {
+            border-top: 1px solid var(--border);
+        }
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+            background: var(--text-muted);
+            transition: background 0.3s;
+        }
+        .progress-dot.loading {
+            background: var(--accent);
+            animation: pulse 1.2s ease infinite;
+        }
+        .progress-dot.ready { background: var(--success); }
+        .progress-dot.error { background: var(--error); }
+        .progress-dot.disabled { background: var(--border); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .progress-info .progress-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .progress-info .progress-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* --- Gear Icon --- */
+        .gear-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .gear-btn:hover {
+            color: var(--text-secondary);
+            background: var(--bg-hover);
+        }
+        .gear-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .header {
+            position: relative;
+        }
+
+        /* Main content hidden until ready */
+        .main-content.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -817,8 +1107,14 @@
                 <h1>Vox<em>Craft</em></h1>
             </div>
             <p>Multi-language voice synthesis powered by Qwen3-TTS</p>
+            <button class="gear-btn" onclick="openSetup()" title="Model Setup" style="display:none" id="gearBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+            </button>
         </header>
 
+        <div class="main-content hidden" id="mainContent">
         <!-- Mode Tabs -->
         <div class="mode-tabs">
             <button class="mode-tab active" data-mode="preset" onclick="switchMode('preset')">
@@ -984,6 +1280,100 @@
         </section>
 
         <audio id="audio" style="display:none"></audio>
+        </div><!-- /main-content -->
+    </div>
+
+    <!-- Setup Overlay -->
+    <div class="setup-overlay hidden" id="setupOverlay">
+        <div class="setup-card">
+            <div class="setup-header">
+                <div class="logo-mark" style="margin:0 auto 12px">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <h2>Vox<em>Craft</em> Setup</h2>
+                <p>Configure your voice synthesis models</p>
+                <div class="setup-device" id="setupDevice">
+                    <span class="device-dot"></span>
+                    <span id="deviceLabel">Detecting...</span>
+                </div>
+            </div>
+
+            <!-- Form View -->
+            <div class="setup-form" id="setupForm">
+                <div class="setup-section">
+                    <div class="setup-section-label">Modes</div>
+                    <div class="setup-toggle active" data-mode="preset" onclick="toggleSetupMode(this)">
+                        <div class="setup-toggle-check">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="setup-toggle-info">
+                            <div class="toggle-name">Preset Voice</div>
+                            <div class="toggle-desc">9 premium voices with style control</div>
+                        </div>
+                    </div>
+                    <div class="setup-toggle active" data-mode="design" onclick="toggleSetupMode(this)">
+                        <div class="setup-toggle-check">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="setup-toggle-info">
+                            <div class="toggle-name">Voice Design</div>
+                            <div class="toggle-desc">Create custom voices with natural language</div>
+                        </div>
+                    </div>
+                    <div class="setup-toggle" data-mode="clone" onclick="toggleSetupMode(this)">
+                        <div class="setup-toggle-check">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="setup-toggle-info">
+                            <div class="toggle-name">Voice Clone</div>
+                            <div class="toggle-desc">Clone any voice from 3-second audio</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <div class="setup-section-label">Model Size</div>
+                    <div class="setup-radio-group">
+                        <div class="setup-radio" data-size="0.6B" onclick="selectModelSize(this)">
+                            <div class="radio-label">0.6B</div>
+                            <div class="radio-desc">Faster, less VRAM</div>
+                        </div>
+                        <div class="setup-radio active" data-size="1.7B" onclick="selectModelSize(this)">
+                            <div class="radio-label">1.7B</div>
+                            <div class="radio-desc">Better quality</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setup-warning" id="setupWarning">Please enable at least one mode</div>
+                <button class="setup-btn" id="setupBtn" onclick="startSetupLoad()">Start Loading Models</button>
+            </div>
+
+            <!-- Progress View -->
+            <div class="setup-progress" id="setupProgress">
+                <div class="progress-item" data-mode="preset">
+                    <div class="progress-dot" id="dotPreset"></div>
+                    <div class="progress-info">
+                        <div class="progress-name">Preset Voice</div>
+                        <div class="progress-status" id="statusPreset">Waiting...</div>
+                    </div>
+                </div>
+                <div class="progress-item" data-mode="design">
+                    <div class="progress-dot" id="dotDesign"></div>
+                    <div class="progress-info">
+                        <div class="progress-name">Voice Design</div>
+                        <div class="progress-status" id="statusDesign">Waiting...</div>
+                    </div>
+                </div>
+                <div class="progress-item" data-mode="clone">
+                    <div class="progress-dot" id="dotClone"></div>
+                    <div class="progress-info">
+                        <div class="progress-name">Voice Clone</div>
+                        <div class="progress-status" id="statusClone">Waiting...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1032,27 +1422,256 @@
     let selectedRegisteredVoice = null;
     let registeredVoices = [];
 
-    // --- Init ---
+    let capabilities = { preset: true, design: true, clone: true };
+    let setupPollTimer = null;
+    let setupConfig = { preset: true, design: true, clone: false, model_size: "1.7B" };
+
+    // --- Setup UI ---
+
+    function showSetupOverlay(existingConfig) {
+        const overlay = document.getElementById("setupOverlay");
+        const form = document.getElementById("setupForm");
+        const progress = document.getElementById("setupProgress");
+
+        overlay.classList.remove("hidden");
+        form.classList.remove("hidden");
+        progress.classList.remove("show");
+
+        // Apply existing config if reopening
+        if (existingConfig) {
+            setupConfig = { ...existingConfig };
+            document.querySelectorAll(".setup-toggle").forEach(el => {
+                const mode = el.dataset.mode;
+                el.classList.toggle("active", !!setupConfig[mode]);
+            });
+            document.querySelectorAll(".setup-radio").forEach(el => {
+                el.classList.toggle("active", el.dataset.size === setupConfig.model_size);
+            });
+        }
+    }
+
+    function hideSetupOverlay() {
+        document.getElementById("setupOverlay").classList.add("hidden");
+        if (setupPollTimer) {
+            clearInterval(setupPollTimer);
+            setupPollTimer = null;
+        }
+    }
+
+    function openSetup() {
+        // Re-open with current config
+        const saved = { ...setupConfig };
+        showSetupOverlay(saved);
+    }
+
+    function toggleSetupMode(el) {
+        el.classList.toggle("active");
+        setupConfig[el.dataset.mode] = el.classList.contains("active");
+        document.getElementById("setupWarning").classList.remove("show");
+    }
+
+    function selectModelSize(el) {
+        document.querySelectorAll(".setup-radio").forEach(r => r.classList.remove("active"));
+        el.classList.add("active");
+        setupConfig.model_size = el.dataset.size;
+    }
+
+    async function startSetupLoad() {
+        const anyEnabled = setupConfig.preset || setupConfig.design || setupConfig.clone;
+        if (!anyEnabled) {
+            document.getElementById("setupWarning").classList.add("show");
+            return;
+        }
+
+        // Switch to progress view
+        document.getElementById("setupForm").classList.add("hidden");
+        document.getElementById("setupProgress").classList.add("show");
+
+        // Update progress items visibility
+        const STATUS_TEXT = {
+            idle: "Not enabled",
+            loading: "Downloading & loading model...",
+            ready: "Ready",
+            error: "Error",
+        };
+
+        ["preset", "design", "clone"].forEach(mode => {
+            const dot = document.getElementById("dot" + mode.charAt(0).toUpperCase() + mode.slice(1));
+            const status = document.getElementById("status" + mode.charAt(0).toUpperCase() + mode.slice(1));
+            if (!setupConfig[mode]) {
+                dot.className = "progress-dot disabled";
+                status.textContent = "Not enabled";
+            } else {
+                dot.className = "progress-dot";
+                status.textContent = "Waiting...";
+            }
+        });
+
+        // POST to start loading
+        try {
+            await fetch("/api/setup/load", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(setupConfig),
+            });
+        } catch {
+            showError("Failed to start model loading");
+            return;
+        }
+
+        // Poll for progress
+        pollSetupStatus();
+        setupPollTimer = setInterval(pollSetupStatus, 1500);
+    }
+
+    async function pollSetupStatus() {
+        try {
+            const res = await fetch("/api/setup/status");
+            const data = await res.json();
+
+            const STATUS_TEXT = {
+                idle: "Not enabled",
+                loading: "Downloading & loading model...",
+                ready: "Ready",
+                error: "Error",
+            };
+
+            let allDone = true;
+
+            ["preset", "design", "clone"].forEach(mode => {
+                const info = data.models[mode];
+                const dot = document.getElementById("dot" + mode.charAt(0).toUpperCase() + mode.slice(1));
+                const status = document.getElementById("status" + mode.charAt(0).toUpperCase() + mode.slice(1));
+
+                if (!info.enabled) {
+                    dot.className = "progress-dot disabled";
+                    status.textContent = "Not enabled";
+                    return;
+                }
+
+                dot.className = "progress-dot " + info.status;
+                status.textContent = info.error
+                    ? `Error: ${info.error}`
+                    : (STATUS_TEXT[info.status] || info.status);
+
+                if (info.status === "loading" || info.status === "idle") {
+                    allDone = false;
+                }
+            });
+
+            if (allDone) {
+                if (setupPollTimer) {
+                    clearInterval(setupPollTimer);
+                    setupPollTimer = null;
+                }
+                // Wait a beat then transition to main UI
+                setTimeout(async () => {
+                    hideSetupOverlay();
+                    await loadMainUI();
+                }, 800);
+            }
+        } catch {
+            // Network error, keep polling
+        }
+    }
+
+    async function loadMainUI() {
+        try {
+            const capRes = await fetch("/api/capabilities");
+            capabilities = await capRes.json();
+
+            // Enable/disable tabs
+            document.querySelectorAll(".mode-tab").forEach(tab => {
+                const mode = tab.dataset.mode;
+                if (!capabilities[mode]) {
+                    tab.classList.add("disabled");
+                    tab.title = "This mode is not enabled";
+                } else {
+                    tab.classList.remove("disabled");
+                    tab.title = "";
+                }
+            });
+
+            // Fetch mode-specific data
+            const fetches = [];
+            if (capabilities.preset) {
+                fetches.push(fetch("/api/speakers").then(r => r.json()).then(d => { speakersData = d; }));
+            }
+            if (capabilities.design) {
+                fetches.push(fetch("/api/design-languages").then(r => r.json()).then(d => { designLanguages = d; }));
+            }
+            if (capabilities.clone) {
+                fetches.push(
+                    fetch("/api/clone-languages").then(r => r.json()).then(d => { cloneLanguages = d; }),
+                    fetch("/api/registered-voices").then(r => r.json()).then(d => { registeredVoices = d; }),
+                );
+            }
+            await Promise.all(fetches);
+
+            // Show main content + gear
+            document.getElementById("mainContent").classList.remove("hidden");
+            document.getElementById("gearBtn").style.display = "";
+
+            // Switch to first available mode
+            const firstMode = ["preset", "design", "clone"].find(m => capabilities[m]);
+            if (firstMode) {
+                switchMode(firstMode);
+            }
+        } catch {
+            showError("Failed to connect to server");
+        }
+    }
+
+    // --- Init (new flow: setup-first) ---
     async function init() {
         try {
-            const [speakersRes, designLangsRes, cloneLangsRes, regVoicesRes] = await Promise.all([
-                fetch("/api/speakers"),
-                fetch("/api/design-languages"),
-                fetch("/api/clone-languages"),
-                fetch("/api/registered-voices"),
-            ]);
-            speakersData = await speakersRes.json();
-            designLanguages = await designLangsRes.json();
-            cloneLanguages = await cloneLangsRes.json();
-            registeredVoices = await regVoicesRes.json();
-            switchMode("preset");
+            const res = await fetch("/api/setup/status");
+            const status = await res.json();
+
+            // Show device info
+            document.getElementById("deviceLabel").textContent =
+                status.device.toUpperCase() + " detected";
+
+            if (!status.configured) {
+                // First time: show setup overlay
+                showSetupOverlay();
+                return;
+            }
+
+            // Restore setupConfig from saved settings
+            setupConfig = {
+                preset: status.models.preset.enabled,
+                design: status.models.design.enabled,
+                clone: status.models.clone.enabled,
+                model_size: status.model_size,
+            };
+
+            // Check if all enabled models are ready
+            const allReady = Object.entries(status.models)
+                .filter(([_, m]) => m.enabled)
+                .every(([_, m]) => m.status === "ready");
+
+            if (allReady) {
+                // All ready, go straight to main UI
+                await loadMainUI();
+            } else {
+                // Models still loading, show progress overlay
+                showSetupOverlay(setupConfig);
+                // Switch directly to progress view
+                document.getElementById("setupForm").classList.add("hidden");
+                document.getElementById("setupProgress").classList.add("show");
+                // Start polling
+                pollSetupStatus();
+                setupPollTimer = setInterval(pollSetupStatus, 1500);
+            }
         } catch {
-            showError("無法連線至伺服器，請確認 server 已啟動");
+            showError("Failed to connect to server. Please make sure the server is running.");
         }
     }
 
     // --- Mode switching ---
     function switchMode(mode) {
+        if (!capabilities[mode]) return;
         currentMode = mode;
         selectedRegisteredVoice = null;
         document.querySelectorAll(".mode-tab").forEach(t =>

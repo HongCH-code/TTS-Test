@@ -2,10 +2,11 @@
 
 import io
 import uuid
+import torch
 import soundfile as sf
 from qwen_tts import Qwen3TTSModel
 from app.config import (
-    CUSTOM_VOICE_MODEL, VOICE_DESIGN_MODEL, VOICE_CLONE_MODEL, DTYPE,
+    DTYPE, MODEL_ATTR,
     LANGUAGE_SPEAKERS, VOICE_DESIGN_LANGUAGES, VOICE_CLONE_LANGUAGES,
 )
 
@@ -17,31 +18,91 @@ class TTSEngine:
         self.clone_model = None
         self.voice_registry = {}  # {voice_id: {"name": str, "prompt": list}}
 
-    def load_model(self):
-        """載入 TTS 模型（啟動時呼叫）"""
-        # CustomVoice 模型（預設音色 + instruct 控制）
-        print(f"正在載入 CustomVoice 模型: {CUSTOM_VOICE_MODEL}")
-        self.custom_model = Qwen3TTSModel.from_pretrained(
-            CUSTOM_VOICE_MODEL, dtype=DTYPE
-        )
-        print(f"CustomVoice 載入完成，裝置: {self.custom_model.device}")
-        speakers = self.custom_model.get_supported_speakers()
-        if speakers:
-            print(f"支援音色: {speakers}")
+        # 狀態追蹤
+        self.model_status = {
+            "preset": "idle",   # idle | loading | ready | error
+            "design": "idle",
+            "clone":  "idle",
+        }
+        self.model_errors = {}  # {mode: error_message}
+        self.model_ids = {}     # {mode: model_id} — 記錄目前載入的 model ID
 
-        # VoiceDesign 模型（自定義音色）
-        print(f"正在載入 VoiceDesign 模型: {VOICE_DESIGN_MODEL}")
-        self.design_model = Qwen3TTSModel.from_pretrained(
-            VOICE_DESIGN_MODEL, dtype=DTYPE
-        )
-        print(f"VoiceDesign 載入完成，裝置: {self.design_model.device}")
+    # --- Dynamic Loading ---
 
-        # Base 模型（語音複製）
-        print(f"正在載入 VoiceClone 模型: {VOICE_CLONE_MODEL}")
-        self.clone_model = Qwen3TTSModel.from_pretrained(
-            VOICE_CLONE_MODEL, dtype=DTYPE
-        )
-        print(f"VoiceClone 載入完成，裝置: {self.clone_model.device}")
+    def load_single_model(self, mode: str, model_id: str):
+        """載入單一模型，更新 status"""
+        attr = MODEL_ATTR[mode]
+        self.model_status[mode] = "loading"
+        self.model_errors.pop(mode, None)
+        try:
+            print(f"正在載入 {mode} 模型: {model_id}")
+            model = Qwen3TTSModel.from_pretrained(model_id, dtype=DTYPE)
+            setattr(self, attr, model)
+            self.model_status[mode] = "ready"
+            self.model_ids[mode] = model_id
+            print(f"{mode} 載入完成，裝置: {model.device}")
+        except Exception as e:
+            self.model_status[mode] = "error"
+            self.model_errors[mode] = str(e)
+            print(f"{mode} 載入失敗: {e}")
+
+    def unload_model(self, mode: str):
+        """卸載模型釋放記憶體"""
+        attr = MODEL_ATTR[mode]
+        model = getattr(self, attr)
+        if model:
+            del model
+            setattr(self, attr, None)
+        self.model_status[mode] = "idle"
+        self.model_ids.pop(mode, None)
+        self.model_errors.pop(mode, None)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+    def unload_all(self):
+        """卸載全部模型"""
+        for mode in ("preset", "design", "clone"):
+            self.unload_model(mode)
+
+    def get_status(self) -> dict:
+        """回傳各模型狀態"""
+        return {
+            mode: {
+                "status": self.model_status[mode],
+                "model_id": self.model_ids.get(mode),
+                "error": self.model_errors.get(mode),
+            }
+            for mode in ("preset", "design", "clone")
+        }
+
+    def load_model(self, enable_preset=True, enable_design=True,
+                    enable_clone=True, preset_id=None, design_id=None,
+                    clone_id=None):
+        """載入 TTS 模型（相容舊介面，內部呼叫 load_single_model）"""
+        from app.config import CUSTOM_VOICE_MODEL, VOICE_DESIGN_MODEL, VOICE_CLONE_MODEL
+
+        if enable_preset:
+            self.load_single_model("preset", preset_id or CUSTOM_VOICE_MODEL)
+        else:
+            print("CustomVoice 模式已停用，跳過載入")
+
+        if enable_design:
+            self.load_single_model("design", design_id or VOICE_DESIGN_MODEL)
+        else:
+            print("VoiceDesign 模式已停用，跳過載入")
+
+        if enable_clone:
+            self.load_single_model("clone", clone_id or VOICE_CLONE_MODEL)
+        else:
+            print("VoiceClone 模式已停用，跳過載入")
+
+    def get_capabilities(self) -> dict:
+        """回傳目前啟用的功能"""
+        return {
+            "preset": self.custom_model is not None,
+            "design": self.design_model is not None,
+            "clone":  self.clone_model is not None,
+        }
 
     def get_speakers(self) -> dict:
         return LANGUAGE_SPEAKERS

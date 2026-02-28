@@ -1,6 +1,7 @@
 """FastAPI 應用入口 - Qwen3-TTS 多國語音播放器"""
 
 import os
+import threading
 import uuid
 from contextlib import asynccontextmanager
 from typing import Optional
@@ -9,18 +10,121 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from app.tts_engine import engine
-from app.config import UPLOAD_DIR, MAX_AUDIO_SIZE_MB
+from app.config import (
+    UPLOAD_DIR, MAX_AUDIO_SIZE_MB, CONFIG_DIR, DEVICE,
+    load_user_config, save_user_config, get_model_id,
+)
+
+
+def auto_load_from_config(cfg: dict):
+    """根據已儲存的設定，背景載入模型"""
+    model_size = cfg.get("model_size", "1.7B")
+    custom_paths = cfg.get("custom_paths", {})
+
+    for mode in ("preset", "design", "clone"):
+        if cfg.get(mode, False):
+            # 環境變數指定的路徑優先，其次是 custom_paths，最後是預設
+            model_id = custom_paths.get(mode) or get_model_id(mode, model_size)
+            engine.load_single_model(mode, model_id)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     os.makedirs(UPLOAD_DIR, exist_ok=True)
-    engine.load_model()
+    os.makedirs(CONFIG_DIR, exist_ok=True)
+    # 如果有已儲存的設定，背景自動載入（不阻塞啟動）
+    saved = load_user_config()
+    if saved:
+        threading.Thread(
+            target=auto_load_from_config, args=(saved,), daemon=True
+        ).start()
     yield
 
 
 app = FastAPI(title="VoxCraft - Multi-Language Voice Studio", lifespan=lifespan)
 
+
+# --- Setup API ---
+
+class SetupLoadRequest(BaseModel):
+    preset: bool = False
+    design: bool = False
+    clone: bool = False
+    model_size: str = "1.7B"
+
+
+@app.get("/api/setup/status")
+async def get_setup_status():
+    """回傳設定狀態 + 各模型載入狀態"""
+    saved = load_user_config()
+    model_status = engine.get_status()
+
+    models = {}
+    for mode in ("preset", "design", "clone"):
+        enabled = saved.get(mode, False) if saved else False
+        model_size = saved.get("model_size", "1.7B") if saved else "1.7B"
+        models[mode] = {
+            "enabled": enabled,
+            "status": model_status[mode]["status"],
+            "model_id": model_status[mode]["model_id"],
+            "error": model_status[mode]["error"],
+        }
+
+    return {
+        "configured": saved is not None,
+        "models": models,
+        "model_size": saved.get("model_size", "1.7B") if saved else "1.7B",
+        "device": DEVICE,
+    }
+
+
+@app.post("/api/setup/load")
+async def setup_load(req: SetupLoadRequest):
+    """儲存設定並開始背景載入模型"""
+    if req.model_size not in ("0.6B", "1.7B"):
+        raise HTTPException(status_code=400, detail="model_size 必須為 0.6B 或 1.7B")
+
+    if not any([req.preset, req.design, req.clone]):
+        raise HTTPException(status_code=400, detail="請至少啟用一個模式")
+
+    # 儲存 config
+    cfg = {
+        "preset": req.preset,
+        "design": req.design,
+        "clone": req.clone,
+        "model_size": req.model_size,
+        "custom_paths": {
+            "preset": None,
+            "design": None,
+            "clone": None,
+        },
+    }
+    save_user_config(cfg)
+
+    # 在背景 thread 卸載不需要的 + 載入需要的
+    def background_load():
+        for mode in ("preset", "design", "clone"):
+            if not getattr(req, mode):
+                engine.unload_model(mode)
+
+        for mode in ("preset", "design", "clone"):
+            if getattr(req, mode):
+                model_id = get_model_id(mode, req.model_size)
+                # 如果已經載入相同模型，跳過
+                current_id = engine.model_ids.get(mode)
+                if engine.model_status[mode] == "ready" and current_id == model_id:
+                    continue
+                # 如果載入了不同模型，先卸載
+                if engine.model_status[mode] == "ready":
+                    engine.unload_model(mode)
+                engine.load_single_model(mode, model_id)
+
+    threading.Thread(target=background_load, daemon=True).start()
+
+    return {"ok": True}
+
+
+# --- Existing API ---
 
 class TTSRequest(BaseModel):
     text: str
@@ -39,6 +143,12 @@ class RegisteredCloneRequest(BaseModel):
     text: str
     language: str
     voice_id: str
+
+
+@app.get("/api/capabilities")
+async def get_capabilities():
+    """回傳目前啟用的功能"""
+    return engine.get_capabilities()
 
 
 @app.post("/api/tts")
