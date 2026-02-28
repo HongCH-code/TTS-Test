@@ -853,6 +853,21 @@
             <div class="speaker-chips" id="speakerChips"></div>
         </section>
 
+        <!-- Preset Voice Style Instruct (optional) -->
+        <section class="instruct-section" id="presetInstructSection">
+            <div class="section-label">Style Control <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.625rem;color:var(--text-muted)">(optional)</span></div>
+            <div class="instruct-wrapper">
+                <textarea class="instruct-input" id="presetInstructInput" placeholder="e.g. 'Speak slowly and softly' or 'Use a cheerful, excited tone'" style="min-height:56px"></textarea>
+                <div class="instruct-hint">Control speaking style — emotion, speed, tone. Leave empty for default style.</div>
+                <div class="example-chips">
+                    <button class="example-chip" onclick="fillPresetInstruct(this)">Speak slowly and gently</button>
+                    <button class="example-chip" onclick="fillPresetInstruct(this)">Excited and energetic</button>
+                    <button class="example-chip" onclick="fillPresetInstruct(this)">Whispering softly</button>
+                    <button class="example-chip" onclick="fillPresetInstruct(this)">Serious and authoritative</button>
+                </div>
+            </div>
+        </section>
+
         <!-- Voice Design Instruct -->
         <section class="instruct-section" id="instructSection">
             <div class="section-label">Voice Description</div>
@@ -1030,9 +1045,7 @@
             designLanguages = await designLangsRes.json();
             cloneLanguages = await cloneLangsRes.json();
             registeredVoices = await regVoicesRes.json();
-            const langs = Object.keys(speakersData);
-            renderLangs(langs);
-            selectLang(langs[0]);
+            switchMode("preset");
         } catch {
             showError("無法連線至伺服器，請確認 server 已啟動");
         }
@@ -1047,6 +1060,7 @@
         );
 
         const speakerSection = document.querySelector(".speaker-section");
+        const presetInstructSection = document.getElementById("presetInstructSection");
         const instructSection = document.getElementById("instructSection");
         const cloneSection = document.getElementById("cloneSection");
         const registeredSection = document.getElementById("registeredSection");
@@ -1055,6 +1069,7 @@
 
         // Reset all
         speakerSection.style.display = "none";
+        presetInstructSection.classList.remove("show");
         instructSection.classList.remove("show");
         cloneSection.classList.remove("show");
         registeredSection.classList.remove("show");
@@ -1063,6 +1078,7 @@
 
         if (mode === "preset") {
             speakerSection.style.display = "";
+            presetInstructSection.classList.add("show");
             const langs = Object.keys(speakersData);
             renderLangs(langs);
             selectLang(langs[0]);
@@ -1084,6 +1100,10 @@
 
     function fillInstruct(el) {
         document.getElementById("instructInput").value = el.textContent;
+    }
+
+    function fillPresetInstruct(el) {
+        document.getElementById("presetInstructInput").value = el.textContent;
     }
 
     // --- File upload ---
@@ -1373,10 +1393,13 @@
                     body: JSON.stringify({ text, language: selectedLang, instruct }),
                 });
             } else {
+                const payload = { text, language: selectedLang, speaker: selectedSpeaker };
+                const presetInstruct = document.getElementById("presetInstructInput").value.trim();
+                if (presetInstruct) payload.instruct = presetInstruct;
                 res = await fetch("/api/tts", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text, language: selectedLang, speaker: selectedSpeaker }),
+                    body: JSON.stringify(payload),
                 });
             }
 
