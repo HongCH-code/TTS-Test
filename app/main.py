@@ -94,6 +94,8 @@ async def setup_load(req: SetupLoadRequest):
     for mode, size in req.model_sizes.items():
         if size not in ("0.6B", "1.7B"):
             raise HTTPException(status_code=400, detail=f"{mode} 的 model_size 必須為 0.6B 或 1.7B")
+    # VoiceDesign 只有 1.7B
+    req.model_sizes["design"] = "1.7B"
 
     if not any([req.preset, req.design, req.clone]):
         raise HTTPException(status_code=400, detail="請至少啟用一個模式")

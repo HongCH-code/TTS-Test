@@ -15,7 +15,6 @@ MODEL_IDS = {
         "1.7B": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
     },
     "design": {
-        "0.6B": "Qwen/Qwen3-TTS-12Hz-0.6B-VoiceDesign",
         "1.7B": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
     },
     "clone": {
